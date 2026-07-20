@@ -682,10 +682,6 @@ octave-workspace
 # Simulink autosave extension
 .autosave
 
-# pdf reports
-*.pdf
-
-
 # Test Results File with xml extension
 Test*.xml
 report*
