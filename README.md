@@ -19,7 +19,7 @@ The system consists of a PWM fan with a tachometer feedback pin, I2C based tempe
 
 In absence of real hardware, the firmware behavior is mocked with a Python class that interface with the test framework to demonstrate the logic and execution workflow of automated test cases.
 
-The Python module `thermal_control_sim_server.py` implements a simplified simulator class. During the test run the test framework will interact with **ThermalControlSimulator** class to verify the test cases written in Robot framework textual form.
+The Python module `thermal_control_sim_server.py` implements a simplified simulator class. During the test run the test framework will interact with **ThermalControlSimulator** class to run the test cases written in Robot framework textual form.
 
 The simulation class will accept the following messages strucutre:
   - "GET" <"Parameter Name"> (e.g. TEMPERATURE; TACHOMETER_RPM, PWM_OUTPUT_DUTY)
@@ -49,7 +49,7 @@ For running the test cases, the following pre-requisites are nedded and recommen
 
   ```bash
   # Robot Framework front-end
-  robot --outputdir test_results thermal_control_validation.robot
+  robot --outputdir test_reports thermal_control_validation.robot
   ```
 
 ## Logging and Tolerance Check via Cli Script

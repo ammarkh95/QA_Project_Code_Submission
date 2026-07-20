@@ -1,8 +1,7 @@
 """
 robot_keywords.py
 -----------------
-Keyword library backing tacho_validation.robot. Shares the same simulator and
-transport as the pytest suite so both front-ends validate one device model.
+Keyword library backing tacho_validation.robot utilizing ThermalControlSimulator
 """
 
 from robot.api.deco import keyword  # provided by the `robotframework` package

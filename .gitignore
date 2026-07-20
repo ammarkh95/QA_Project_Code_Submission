@@ -686,5 +686,7 @@ octave-workspace
 Test*.xml
 report*
 test_reports
+test_results/*
 test_reports/*
 TaTooReports
+test_results
