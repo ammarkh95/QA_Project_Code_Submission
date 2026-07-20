@@ -19,9 +19,9 @@ The system consists of a PWM fan with a tachometer feedback pin, I2C based tempe
 
 In absence of real hardware, the firmware behavior is mocked with a Python class that interface with the test framework to demonstrate the logic and execution workflow of automated test cases.
 
-The Python module `thermal_control_sim_server.py` implements a server process based on Python [multiprocessing](https://docs.python.org/3/library/multiprocessing.html#module-multiprocessing.connection) module. The server process will act as the firmware recieving commands over UART from the test setup (i.e. client) and replying back to it. During the test run the test framework will connect to the exposed server process and interact with it to verify the expected logic.
+The Python module `thermal_control_sim_server.py` implements a simplified simulator class. During the test run the test framework will interact with **ThermalControlSimulator** class to verify the test cases written in Robot framework textual form.
 
-The server simulation process will accept the following messages strucutre:
+The simulation class will accept the following messages strucutre:
   - "GET" <"Parameter Name"> (e.g. TEMPERATURE; TACHOMETER_RPM, PWM_OUTPUT_DUTY)
   - "SET" <"Parameter Name"> (e.g. TARGET_TEMPERATURE, PWM_OUTPUT_DUTY)
   - "TRIGGER_FAULT" <"FAULT ERROR CODE"> (e.g. FAULT FAN FEEDBACK ERROR)
