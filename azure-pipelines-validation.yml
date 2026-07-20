@@ -1,0 +1,92 @@
+name: 'Thermal Control System Validation $(Date:yyyyMMdd)$(Rev:.r)' 
+
+# trigger: set trgigger conditions (e.g. pull reuqest)
+
+########################################
+# parameters specified at start of pipeline run
+parameters:
+
+# target agent on which the tests will run
+- name: testAgentName
+  displayName: Test Agent Name
+  type: string
+  default: ''
+
+########################################
+# variables used in the pipeline context
+variables:
+  # target pool where the pipeline will run
+  - name: sysIntAgentPool
+    value: 'P-SIT-All-All'
+
+  # path to the folder where tests scripts are located   
+  - name: pythonTargetTestsPath
+    value: $(System.defaultworkingdirectory)
+
+  # path to test reports to be published
+  - name: testReports
+    value: $(System.defaultworkingdirectory)\test_reports
+
+  # path to test logs to be published
+  - name: testLogs
+    value: $(System.defaultworkingdirectory)\logs
+
+  # enable more output for debugging the pipeline processes    
+  - name: System.Debug
+    value: false
+
+########################################
+# pipeline jobs
+jobs:
+  # Run test job on speicfied agent
+  - job: runValidationTests
+    displayName: Run Thermal Control System Validation Test Suite
+    pool:
+      name: $(sysIntAgentPool)
+      demands:
+        - agent.name -equals ${{ parameters.testAgentName }}
+    workspace:
+      clean: all # what to clean up before the job runs - outputs | resources | all
+    # job steps  
+    steps:
+      - checkout: self
+        persistCredentials: true
+
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.12.0'
+          addToPath: true
+          architecture: 'x64'
+
+      - task: PowerShell@2
+        displayName: Setup Virutal Environment and Run Robot Validation Tests
+        inputs:
+          targetType: 'inline'
+          script: |
+                  python -m venv venv
+                  . venv\Scripts\activate.ps1
+                  python -m pip install -r '$(pythonTargetTestsPath)\requirements.txt'
+                  robot --outputdir '$(testReports)' thermal_control_validation.robot
+          showWarnings: true
+
+      - task: PublishTestResults@2
+        condition: succeededOrFailed()
+        inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: '**/results/junit-*.xml' 
+          searchFolder: '$(System.DefaultWorkingDirectory)'
+          publishRunAttachments: true
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Test results Report'
+        condition: succeededOrFailed()
+        inputs:
+          PathtoPublish: '$(testReports)'
+          ArtifactName: Validation Test Report
+
+      - task: PublishBuildArtifacts@1
+        displayName: 'Publish Test Logs'
+        condition: succeededOrFailed()
+        inputs:
+          PathtoPublish: '$(testLogs)'
+          ArtifactName: Validation Tests Logs
